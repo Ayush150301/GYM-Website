@@ -24,7 +24,7 @@ const HeroBanner = () => {
         Sweat, Smile <br /> and Repeat
       </Typography>
       <Typography fontSize="22px" lineHeight="35px" mb={4}>
-        Check out the mots effective exercises
+        Check out the most effective exercises
       </Typography>
       <Button variant="contained" color="error" href="#exercises"
       sx={{background:'#FF2625',padding:'10px'}}>

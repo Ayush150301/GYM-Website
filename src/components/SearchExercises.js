@@ -2,37 +2,43 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { exerciseOptions, fetchData } from "../utils/fetchData";
 import HorizontalScrollbar from "./HorizontalScrollbar";
-// import { fetchData } from "../utils/fetchData";
 
-const SearchExercises = ({setExercises,bodyPart,setBodyPart}) => {
+const SearchExercises = ({ setExercises, bodyPart, setBodyPart }) => {
   const [search, setSearch] = useState("");
   const [bodyParts, setBodyParts] = useState([]);
 
   useEffect(() => {
     const fetchExercisesData = async () => {
       const bodyPartsData = await fetchData(
-        'https://exercisedb.p.rapidapi.com/exercises/bodyPartList', exerciseOptions
+        "https://exercisedb.p.rapidapi.com/exercises/bodyPartList",
+        exerciseOptions
       );
 
-      setBodyParts(['all', ...bodyPartsData]);
+      // setBodyParts(['all', ...bodyPartsData]);
+      if (Array.isArray(bodyPartsData) && bodyPartsData.length > 0) {
+        setBodyParts(["all", ...bodyPartsData]);
+      } else {
+        console.error("Body parts data is not valid:", bodyPartsData);
+      }
     };
     fetchExercisesData();
   }, []);
 
   const handleSearch = async () => {
     if (search) {
-      const exerciseData = await fetchData(
+      const exercisesData = await fetchData(
         "https://exercisedb.p.rapidapi.com/exercises",
         exerciseOptions
       );
 
-      const searchedExercises = exerciseData.filter(
-        (exercise) =>
-          exercise.name.toLowerCase().includes(search) ||
-          exercise.target.toLowerCase().includes(search) ||
-          exercise.equipment.toLowerCase().includes(search) ||
-          exercise.bodyPart.toLowerCase().includes(search)
+      const searchedExercises = exercisesData.filter(
+        (item) =>
+          item.name.toLowerCase().includes(search) ||
+          item.target.toLowerCase().includes(search) ||
+          item.equipment.toLowerCase().includes(search) ||
+          item.bodyPart.toLowerCase().includes(search),
       );
+      window.scrollTo({ top: 1800, left: 100, behavior: "smooth" });
       setSearch("");
       setExercises(searchedExercises);
     }
@@ -50,13 +56,8 @@ const SearchExercises = ({setExercises,bodyPart,setBodyPart}) => {
       </Typography>
       <Box position="relative" mb="72px">
         <TextField
-          sx={{
-            input: { fontWeight: "700", border: "none", borderRadius: "4px" },
-            width: { lg: "800px", xs: "350px" },
-            backgroundColor: "#FFF",
-            borderRadius: "40px",
-          }}
           height="76px"
+          sx={{ input: { fontWeight: '700', border: 'none', borderRadius: '4px' }, width: { lg: '1170px', xs: '350px' }, backgroundColor: '#fff', borderRadius: '40px' }}
           value={search}
           onChange={(e) => setSearch(e.target.value.toLowerCase())}
           placeholder="Search Exercises"
@@ -80,8 +81,12 @@ const SearchExercises = ({setExercises,bodyPart,setBodyPart}) => {
         </Button>
       </Box>
       <Box sx={{ position: "relative", width: "100%", p: "20px" }}>
-        <HorizontalScrollbar data={bodyParts} 
-          bodyPart={bodyPart} setBodyPart={setBodyPart}
+        <HorizontalScrollbar
+          data={bodyParts}
+          bodyParts
+          setBodyPart={setBodyPart}
+          bodyPart={bodyPart}
+          isBodyParts
         />
       </Box>
     </Stack>
